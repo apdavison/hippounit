@@ -495,6 +495,7 @@ class ObliqueIntegrationTest(Test):
         self.force_run_bin_search = force_run_bin_search
         self.directory='./temp_data/'
         self.directory_figs='./figs/'
+        self.figures = []
 
         description = "Tests the signal integration in oblique dendrites for increasing number of synchronous and asynchronous inputs"
 
@@ -710,7 +711,9 @@ class ObliqueIntegrationTest(Test):
 
         fig0 = plt.gcf()
         fig0.set_size_inches(12, 18)
-        plt.savefig(path_figs + 'traces_sync' + '.pdf', dpi=600,)
+        filename = path_figs + 'traces_sync' + '.pdf'
+        plt.savefig(filename, dpi=600,)
+        self.figures.append(filename)
 
         fig0, axes0 = plt.subplots(nrows=2, ncols=1)
         fig0.tight_layout()
@@ -727,7 +730,9 @@ class ObliqueIntegrationTest(Test):
             plt.xlim(140, 250)
         fig0 = plt.gcf()
         fig0.set_size_inches(12, 18)
-        plt.savefig(path_figs + 'somatic_traces_sync' + '.pdf', dpi=600,)
+        filename = path_figs + 'somatic_traces_sync' + '.pdf'
+        plt.savefig(filename, dpi=600,)
+        self.figures.append(filename)
 
         soma_depol=numpy.array([])
         soma_depols=[]
@@ -788,8 +793,8 @@ class ObliqueIntegrationTest(Test):
 
                 #print(time_to_peak)
 
-            threshold_index0=numpy.where(diff_max_dV_dt==numpy.amax(diff_max_dV_dt[1:]))[0]
-            threshold_index0=numpy.add(threshold_index0,1)
+            threshold_index0 = int(numpy.where(diff_max_dV_dt==numpy.amax(diff_max_dV_dt[1:]))[0]) + 1
+            #threshold_index0 = numpy.add(threshold_index0, 1)
 
             if sep_results[i][threshold_index0][3] > 1 and sep_results[i][threshold_index0-1][3]==1:    #double spikes can cause bigger jump in dV?dt than the first single spike, to find the threshol, we want to eliminate this, but we also need the previous input level to generate spike
                 threshold_index=numpy.where(diff_max_dV_dt==numpy.amax(diff_max_dV_dt[1:threshold_index0-1]))
@@ -968,7 +973,9 @@ class ObliqueIntegrationTest(Test):
             plt.legend(loc=2, prop={'size':10})
         fig = plt.gcf()
         fig.set_size_inches(12, 12)
-        plt.savefig(path_figs + 'input_output_curves_sync' + '.pdf', dpi=600,)
+        filename = path_figs + 'input_output_curves_sync' + '.pdf'
+        plt.savefig(filename, dpi=600,)
+        self.figures.append(filename)
 
         plt.figure(4)
         plt.suptitle('Synchronous inputs')
@@ -1006,7 +1013,9 @@ class ObliqueIntegrationTest(Test):
 
         fig = plt.gcf()
         fig.set_size_inches(12, 15)
-        plt.savefig(path_figs + 'summary_input_output_curve_sync' + '.pdf', dpi=600,)
+        filename = path_figs + 'summary_input_output_curve_sync' + '.pdf'
+        plt.savefig(filename, dpi=600,)
+        self.figures.append(filename)
 
         plt.figure(5)
 
@@ -1034,7 +1043,9 @@ class ObliqueIntegrationTest(Test):
 
         fig = plt.gcf()
         fig.set_size_inches(12, 12)
-        plt.savefig(path_figs + 'peak_derivative_plots_sync' + '.pdf', dpi=600,)
+        filename = path_figs + 'peak_derivative_plots_sync' + '.pdf'
+        plt.savefig(filename, dpi=600)
+        self.figures.append(filename)
 
         #VALUES PLOT
         fig, axes = plt.subplots(nrows=4, ncols=2)
@@ -1182,9 +1193,9 @@ class ObliqueIntegrationTest(Test):
 
         fig = plt.gcf()
         fig.set_size_inches(14, 14)
-        plt.savefig(path_figs + 'values_sync' + '.pdf', dpi=600,)
-
-
+        filename = path_figs + 'values_sync' + '.pdf'
+        plt.savefig(filename, dpi=600)
+        self.figures.append(filename)
 
         # ERROR PLOTS
 
@@ -1300,7 +1311,9 @@ class ObliqueIntegrationTest(Test):
 
         fig = plt.gcf()
         fig.set_size_inches(14, 18)
-        plt.savefig(path_figs + 'errors_sync' + '.pdf', dpi=600,)
+        filename = path_figs + 'errors_sync' + '.pdf'
+        plt.savefig(filename, dpi=600)
+        self.figures.append(filename)
 
     # mean values plot
         fig3, axes3 = plt.subplots(nrows=2, ncols=1)
@@ -1356,7 +1369,9 @@ class ObliqueIntegrationTest(Test):
 
         fig = plt.gcf()
         fig.set_size_inches(22, 18)
-        plt.savefig(path_figs + 'mean_values_sync' + '.pdf', dpi=600,)
+        filename = path_figs + 'mean_values_sync' + '.pdf'
+        plt.savefig(filename, dpi=600)
+        self.figures.append(filename)
 
         plt.figure()
     # mean errors plot
@@ -1373,7 +1388,9 @@ class ObliqueIntegrationTest(Test):
 
         fig = plt.gcf()
         fig.set_size_inches(16, 18)
-        plt.savefig(path_figs + 'mean_errors_sync' + '.pdf', dpi=600,)
+        filename = path_figs + 'mean_errors_sync' + '.pdf'
+        plt.savefig(filename, dpi=600)
+        self.figures.append(filename)
 
         exp_n=92
         n_prox=33
@@ -1435,7 +1452,9 @@ class ObliqueIntegrationTest(Test):
             plt.xlim(140, 250)
         fig = plt.gcf()
         fig.set_size_inches(12, 18)
-        plt.savefig(path_figs + 'traces_async' + '.pdf', dpi=600,)
+        filename = path_figs + 'traces_async' + '.pdf'
+        plt.savefig(filename, dpi=600)
+        self.figures.append(filename)
 
         fig0, axes0 = plt.subplots(nrows=2, ncols=1)
         fig0.tight_layout()
@@ -1452,7 +1471,9 @@ class ObliqueIntegrationTest(Test):
             plt.xlim(140, 250)
         fig = plt.gcf()
         fig.set_size_inches(12, 18)
-        plt.savefig(path_figs + 'somatic_traces_async' + '.pdf', dpi=600,)
+        filename = path_figs + 'somatic_traces_async' + '.pdf'
+        plt.savefig(filename, dpi=600)
+        self.figures.append(filename)
 
         soma_depol=numpy.array([])
         soma_depols=[]
@@ -1570,8 +1591,9 @@ class ObliqueIntegrationTest(Test):
 
         fig = plt.gcf()
         fig.set_size_inches(12, 12)
-        plt.savefig(path_figs + 'input_output_curves_async' + '.pdf', dpi=600,)
-
+        filename = path_figs + 'input_output_curves_async' + '.pdf'
+        plt.savefig(filename, dpi=600)
+        self.figures.append(filename)
 
         plt.figure()
 
@@ -1599,8 +1621,9 @@ class ObliqueIntegrationTest(Test):
 
         fig = plt.gcf()
         fig.set_size_inches(12, 12)
-        plt.savefig(path_figs + 'peak_derivative_plots_async' + '.pdf', dpi=600,)
-
+        filename = path_figs + 'peak_derivative_plots_async' + '.pdf'
+        plt.savefig(filename, dpi=600)
+        self.figures.append(filename)
 
         fig0, axes0 = plt.subplots(nrows=5, ncols=2)
         fig0.tight_layout()
@@ -1627,7 +1650,9 @@ class ObliqueIntegrationTest(Test):
 
         fig = plt.gcf()
         fig.set_size_inches(20, 20)
-        plt.savefig(path_figs + 'nonlin_values_async' + '.pdf', dpi=600,)
+        filename = path_figs + 'nonlin_values_async' + '.pdf'
+        plt.savefig(filename, dpi=600)
+        self.figures.append(filename)
 
         async_nonlin_errors=[]
         asynch_nonlin_error_at_th=numpy.array([])
@@ -1657,7 +1682,9 @@ class ObliqueIntegrationTest(Test):
             plt.title('dendrite '+str(dend_loc000[j][0])+ ' location: ' +str(dend_loc000[j][1]))
         fig = plt.gcf()
         fig.set_size_inches(18, 20)
-        plt.savefig(path_figs + 'nonlin_errors_async' + '.pdf', dpi=600,)
+        filename = path_figs + 'nonlin_errors_async' + '.pdf'
+        plt.savefig(filename, dpi=600)
+        self.figures.append(filename)
 
         return mean_nonlin_at_th, SD_nonlin_at_th
 
@@ -1776,7 +1803,7 @@ class ObliqueIntegrationTest(Test):
         """Implementation of sciunit.Test.score_prediction."""
         score0 = ttest_calc(observation,prediction)
 
-        score=P_Value(score0)
+        score = P_Value(score0)
 
         path_figs = self.directory_figs + 'oblique/' + model_name + '/'
 
@@ -1795,8 +1822,11 @@ class ObliqueIntegrationTest(Test):
         plt.ylabel("p values")
         fig = plt.gcf()
         fig.set_size_inches(12, 10)
-        plt.savefig(path_figs + 'p_values' + '.pdf', dpi=600,)
+        filename = path_figs + 'p_values' + '.pdf'
+        plt.savefig(filename, dpi=600,)
+        self.figures.append(filename)
 
+        score.related_data["figures"] = self.figures
         return score
 
 
