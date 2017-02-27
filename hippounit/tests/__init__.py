@@ -119,7 +119,7 @@ def ttest_calc(observation, prediction):
 
         try:
             ttest_result = ttest(exp_means[i], model_means[i], exp_SDs[i], model_SDs[i], exp_Ns[i], model_N)
-            ttest_result = dimensionless(ttest_result)
+            ttest_result = assert_dimensionless(ttest_result)
             p_values.append(ttest_result)
 
         except (TypeError,AssertionError) as e:
@@ -166,7 +166,7 @@ def zscore3(observation, prediction):
 
             try:
                 feature_error = abs(p_value - o_mean)/o_std
-                feature_error = dimensionless(feature_error)
+                feature_error = assert_dimensionless(feature_error)
                 feature_error_mean=numpy.mean(feature_error)
                 feature_error_sd=numpy.std(feature_error)
 
@@ -248,7 +248,11 @@ class DepolarizationBlockTest(Test):
         path = self.directory + model.name + '/'
 
         if not os.path.exists(path):
-            os.makedirs(path, exist_ok=True)
+            #os.makedirs(path, exist_ok=True)
+            try:
+                os.makedirs(path)
+            except (OSError, IOError):
+                pass
 
         file_name = path + 'cclamp_' + str(amp) + '.p'
 
