@@ -21,6 +21,9 @@ from neuronunit.capabilities import ProducesMembranePotential, ReceivesSquareCur
 import neo
 import efel
 import matplotlib.pyplot as plt
+from urllib import urlopen
+from StringIO import StringIO
+from quantities import ms
 
 
 class RMSZScore(ZScore):
@@ -71,6 +74,7 @@ class MultipleCurrentStepTest(sciunit.Test):
             raise ValueError("Must provide a stimulation protocol")
         self.protocol = protocol
         self.timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        self.figures = []
 
     def validate_observation(self, observation):
         """
@@ -86,7 +90,7 @@ class MultipleCurrentStepTest(sciunit.Test):
 
     def generate_prediction(self, model, verbose=False):
         use_cache = True
-        cache_filename = "results.pkl"
+        cache_filename = "./"+model.working_dir+"/results.pkl"
         if use_cache and os.path.exists(cache_filename):
             io = neo.io.get_io(cache_filename)
             self.recordings = io.read_block()
@@ -100,8 +104,9 @@ class MultipleCurrentStepTest(sciunit.Test):
                          seg.analogsignals[0].rescale('mV').magnitude + i * 110.0,
                          label=seg.name)
             plt.legend()
-            self.figure_path = "{}_{}_{}.png".format(self.name, model.name, self.timestamp)
+            self.figure_path = "./{}/{}_{}_{}.png".format(model.working_dir, self.name, model.name, self.timestamp)
             plt.savefig(self.figure_path)
+            self.figures.append(self.figure_path)
         return self._calculate_features(self.recordings)
 
     def _run_simulations(self, model):
@@ -115,9 +120,9 @@ class MultipleCurrentStepTest(sciunit.Test):
             model.inject_current(step["stimuli"])
             model.run(tstop=step["total_duration"])
             signal = model.get_membrane_potential()
-            stimulus_on =  neo.Epoch(time=step["stimuli"]["delay"],
-                                     duration=step["stimuli"]["duration"],
-                                     label="stimulus")
+            stimulus_on =  neo.Epoch(times=step["stimuli"]["delay"]*ms,
+                                     durations=step["stimuli"]["duration"]*ms,
+                                     labels="stimulus")
             segment.analogsignals.append(signal)
             segment.epochs.append(stimulus_on)
         return recordings
@@ -131,8 +136,8 @@ class MultipleCurrentStepTest(sciunit.Test):
             trace = {
                 'T': segment.analogsignals[0].times.rescale('ms').magnitude,
                 'V': segment.analogsignals[0].rescale('mV').magnitude,
-                'stim_start': [segment.epochs[0].time],
-                'stim_end': [segment.epochs[0].time + segment.epochs[0].duration]
+                'stim_start': [segment.epochs[0].times],
+                'stim_end': [segment.epochs[0].times + segment.epochs[0].durations]
             }
 
             features = efel.getFeatureValues([trace], feature_names)[0]
@@ -162,7 +167,7 @@ class MultipleCurrentStepTest(sciunit.Test):
         For the user to bind additional features to the score.
         """
         if hasattr(self, "figure_path"):
-            score.related_data["figure"] = self.figure_path
+            score.related_data["figures"] = self.figures
         return score
 
 
@@ -180,7 +185,8 @@ class BluePyOpt_MultipleCurrentStepTest(MultipleCurrentStepTest):
     """
 
     def __init__(self, observation=None, name=None, plot_figure=False):
-        with ZipFile(observation) as zf:
+        url = urlopen(observation)
+        with ZipFile(StringIO(url.read())) as zf:
             top_level_directory = os.path.splitext(os.path.basename(observation))[0]
             # load the protocol definition and the reference data
             with zf.open(top_level_directory + "/config/protocols.json") as fp:
