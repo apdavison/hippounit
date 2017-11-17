@@ -74,6 +74,15 @@ class ModelLoader(sciunit.Model,
         # if this doesn't exist mod files are automatically compiled
         self.libpath = "x86_64/.libs/libnrnmech.so.0"
         self.hocpath = model_dir + "/checkpoints/cell.hoc"
+        if not os.path.exists(self.hocpath):
+            self.hocpath = None
+            for file in os.listdir(model_dir + "/checkpoints/"):
+                if file.startswith("cell") and file.endswith(".hoc"):
+                    self.hocpath = model_dir + "/checkpoints/" + file
+                    print "Model = " + self.name + ": cell.hoc not found in /checkpoints; using " + file
+                    break
+            if not os.path.exists(self.hocpath):
+                raise IOError("No appropriate .hoc file found in /checkpoints")
 
         if os.path.isfile(self.modelpath + self.libpath) is False:
             os.system("cd " + self.modelpath + "; nrnivmodl")

@@ -147,7 +147,6 @@ class SomaticFeaturesTest(Test):
 		self.path_temp_data = model.directory + model.name + '/soma/'
 
 		try:
-
 			if not os.path.exists(self.path_temp_data):
 				os.makedirs(self.path_temp_data)
 		except OSError, e:
